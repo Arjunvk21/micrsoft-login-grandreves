@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
-import 'package:crypto/crypto.dart'; // Ensure this package is in pubspec.yaml
+import 'package:crypto/crypto.dart';
+import 'package:intl/intl.dart'; // Ensure this package is in pubspec.yaml
 
 class MicrosoftLoginPage extends StatefulWidget {
   @override
@@ -19,15 +20,24 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
   final String clientId = '925af6e0-4cc9-4657-bc67-22c1401cd99e';
   final String redirectUri =
       'http://localhost:53518/'; // Use HTTPS in production
+  //     late final String authorizationEndpoint;
+  // late final String tokenEndpoint;
+
   final String authorizationEndpoint =
       'https://login.microsoftonline.com/fb7834ec-ee45-4353-9655-0496df9120e0/oauth2/v2.0/authorize';
-  final String tokenEndpoint =
+  final tokenEndpoint =
       'https://login.microsoftonline.com/fb7834ec-ee45-4353-9655-0496df9120e0/oauth2/v2.0/token';
+
+  // final String authorizationEndpoint =
+  //     'https://login.microsoftonline.com\$tenantid/oauth2/v2.0/authorize';
+  // final String tokenEndpoint =
+  //     'https://login.microsoftonline.com/\$tenantid/oauth2/v2.0/token';
 
   final List<String> scopes = [
     'User.Read',
     'Calendars.Read',
-    'Calendars.ReadWrite'
+    'Calendars.ReadWrite',
+    'Calendars.ReadBasic',
   ];
 
   final _formKey = GlobalKey<FormState>();
@@ -63,7 +73,10 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
       html.window.localStorage['code_verifier'] = codeVerifier!;
 
       final authorizationUrl =
-          '$authorizationEndpoint?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&response_mode=query&scope=${scopes.join(" ")}&code_challenge=$codeChallenge&code_challenge_method=S256';
+          '$authorizationEndpoint?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&response_mode=query&scope=${Uri.encodeComponent(scopes.join(" "))}&code_challenge=$codeChallenge&code_challenge_method=S256';
+
+      // final authorizationUrl =
+      //     '$authorizationEndpoint?client_id=$clientId&response_type=code&redirect_uri=$redirectUri&response_mode=query&scope=${scopes.join(" ")}&code_challenge=$codeChallenge&code_challenge_method=S256';
 
       html.window.location.href = authorizationUrl;
     } catch (e) {
@@ -147,32 +160,6 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
       print('Error during token exchange: $e');
     }
   }
-  // Future<void> signInWithMicrosoft() async {
-  //   try {
-  //     // Initialize the MSAL client
-  //     final msal = MsalFlutter(
-  //       clientId: clientId,
-  //       authority: 'https://login.microsoftonline.com/$tenantid',
-  //       redirectUri: redirectUri,
-  //     );
-
-  //     // Sign in the user
-  //     final result = await msal.acquireToken(
-  //       scopes: ['User.Read', 'Calendars.Read'], // Request the necessary scopes
-  //     );
-
-  //     setState(() {
-  //       accessToken = result.accessToken; // Get the access token
-  //     });
-
-  //     print('Access Token: $accessToken');
-
-  //     // Fetch calendar events after signing in
-  //     await fetchEvents(accessToken!);
-  //   } catch (e) {
-  //     print('Error signing in: $e');
-  //   }
-  // }
 
   Future<Map<String, dynamic>?> fetchUserProfile() async {
     if (accessToken == null) return null;
@@ -203,8 +190,7 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
       Uri.parse(
           'https://graph.microsoft.com/v1.0/me/events?\$select=subject,body,bodyPreview,organizer,attendees,start,end,location'), // Correct endpoint
       headers: {
-        'Authorization':
-            'Bearer EwCIA8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAYS1f7iRUldP6q6Y8jaDNE7RIbBEAiv315k4ZH7rl2OlXhPpmU/OfcCzN0B44/kLuJJdRIsTpiPYlDkZphs3ehHXndZKpJqfBdTzXiHjBmP9+VN5KN6KS4gJASklwGtgB2PckRrHmpJ0FdQdAqY5f2WbGiFNRXSjz0eoN4f8APAOdHUJlZkiozJOCDjFYCoJmtxsEtwnlkwY2CB7C0ePpOKV8G+H6P52U+5YNiMCIuMZj44cVHiEdpL/m7ZZxTnFCMfoaQN0tEdnOVzMWNtp12Km6+lrbg+EGZF+LNR/nLCzgfwIW9LaJ13QUdJvvo9d3lAkt7jjvvTFOD4oZPwsnkcQZgAAEMbkEBFkyw8sSMELrIQtzndQArZ7Oo0/I6ugv5tG7I+Fmf2JngG8dk89ldtkY7RY1SBztuuoAiHOd/JfO/h0+ppV6dDcyP3tlR66ScNmFFjboDmuhV+yzTz1rZ2XbPS1j9ND7Yu/NKXuT/g9+HR1S/iTkfe5L5ZJXTDO3CF2juGVzNUzAfgzGTP9NOTcboSm21vfpdszZ349RMsmER5s1ob47t4RquL0TO0ujs6vhXIt403rIzmW6i5rC2qXJy6ZwVgFmUcCgD1yWu7iOYwGwn1i6eWZYd7wgUXUSovYcE5p+nimCpTTeNNGam9mEvI+priqKn/gztSz6CkN49nncMXfnqXEJsqAPp4AsUOqIJKhWTxhFWzDYJwvwK8xR8oWDyIHK6yWQGTTLgtGrBESxb6fR1XVlW0g2el+BpHvdy995taX7bJmp4mqphqtEPdXOy5e6ElouA/Zm7t+s9F2a2V2BpsWWsddgaE2/9JR5qXDQTSwP8zF0w/gPmRVQl5zU2Gx+iStloHBfQOZTJPAtEkS8BU5kyzQ4ExM9oS5flssFF44UFToPG8dRjYUgc21YMrrqCEWwbcS9RWq+ctA4H7iYy42ncuXRhQkl1B1JdHq3OZ1Gtc/imYisD7sEughWnRKAfdYHGh0vu4u/3Hz7eNGtcoROPJqQfXpuE+maNsCHN+O23+Z/IJFxqk+lI069y+0YNI8sqMNZgv98Mf0Cx5DpYqN7hzxO5/a71oicbMMd5D/eFDkK6SdrTA3Nf1H8/2dZEttNHuEwtW0n1B0jTA9lyqi4vBQHfCwRvs0zfNGMKeUAg==',
+        'Authorization': 'Bearer EwCYA8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAQjcQeIEEq0M9RiPjCk8OVsG0+pit5hcMoqbqHsNLI1s8ODlfmKWzSq7kFMX/WJ6mD6287cSlkGLMDyHbwMx3Aosf6SVoSnklygzuYRxfL6MvKe73fAPy0u7Zre0C+8ytx+eX2gWY4lcyh9wwjcHBr+vWvwIhHzeD/mTqX64xojxjb6gOnbseHF+qkfDa0fEN/U57LNGyZV9wy8RJbgVDkmy316NV2iZLEeWJX7sxyh7DQeejsJehsf4i9CrY89rlWVnkSYBD4b9VPWnmL0oITdiwDrf7phFTLkgdAeHcxU2pe7ORg+TtVc7nCT7c/fZttfzUxzMJcFbCNRuGu8ESD8QZgAAEDbZt1SCymWe29+Y0SUbiV9gAnbqhgqBVsC9/w0HrOd2zpNQS6e6ioq4/mF68YFFeqKTi+8IiezVw2+5NlQOu6YoENH4bfsF4gz2X8BZ/n5Gm6Tm8nhEp9+CMY8YGEvfA8u97zce9D7rKk/N2LD83GTx7pv2ts4gpyfyNVFn3c89469wB/x5hjk68Ec53lQMSGcf4R0OWEEDT8iFfXNqSf7DhnUJGfLGIbZncFYnxF17DTcrfK7mcasRH5HVotLCwRQilmCwwzfytxv2FpxPlH4jUihPrWbaBncRX13uGsn8+rSQulBB/x/6qKVnWMeUrfwgomnNRguXCpYNbGut5D7c6ypDRs3zPFOnKkLrDrqgBzYOhB24AuUcWX45WG9XEeoilpWaWeH1Sc6Td32iIUPJkk3++Ww5pFB93DdySZtFiepAMOo9aqfVchhiYse4LUSpNyE4101fouVVPH6XLB5sEgYlWZ2T0rc+cUr2E/qLI+xsgUQnS8asj0pY56rA8COA8gBQJh2R9xspcwuMvnNVMJJ5NOBJwZED/bsvRUE7xrulpNHd/pDhw3ysEMpr+DXpV2C1f3grI/qdjqvp//1JeBpLvOZNVVBf4rEfy2nhA/zN72Jq53/P7zzZ5m/I+/ry+WrYUdrbvI0iekigtkqHZOtzwCoscpXHhB0nSiS5qGdAeaOOblVqZBpKJSS70cV0Ir9EoD9GvqeF9CfE5J4uQz1zpvmaMbGvsoCtHQ5Lrm1+UCG9PTPV8GVuk6VjPXIQwebB4z7JMgbEf+RAbo79uFRzo0VkjcvPV6C72BkRhFt26g+dJg91AUpSaoYELCQooAI=',
         'Content-Type': 'application/json',
       },
     );
@@ -384,8 +370,10 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             userProfile != null
-                ? Text('Welcome, ${userProfile!['displayName']}',
-                    style: const TextStyle(fontSize: 24))
+                ? Text(
+                    'Welcome, ${userProfile!['displayName']}',
+                    style: const TextStyle(fontSize: 24),
+                  )
                 : Container(),
             const SizedBox(height: 20),
             const Text('Calendar Events:', style: TextStyle(fontSize: 20)),
@@ -398,10 +386,14 @@ class HomePage extends StatelessWidget {
                     elevation: 2,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
-                      title: Text(event['subject'],
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('Starts at: ${event['start']['dateTime']}',
-                          style: const TextStyle(color: Colors.grey)),
+                      title: Text(
+                        event['subject'],
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        'Starts at: ${event['start']['dateTime']}',
+                        style: const TextStyle(color: Colors.grey),
+                      ),
                     ),
                   );
                 },
@@ -410,6 +402,200 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return EventDialog(onSubmit: (
+                String title,
+                String bodyContent,
+                String startDate,
+                String endDate,
+                String location,
+              ) {
+                postEvent(title, bodyContent, startDate, endDate, location);
+              });
+            },
+          );
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+Future<void> postEvent(
+  String title,
+  String bodyContent,
+  String startDateTime,
+  String endDateTime,
+  String location,
+) async {
+  String accessToken =
+      "EwCYA8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAQjcQeIEEq0M9RiPjCk8OVsG0+pit5hcMoqbqHsNLI1s8ODlfmKWzSq7kFMX/WJ6mD6287cSlkGLMDyHbwMx3Aosf6SVoSnklygzuYRxfL6MvKe73fAPy0u7Zre0C+8ytx+eX2gWY4lcyh9wwjcHBr+vWvwIhHzeD/mTqX64xojxjb6gOnbseHF+qkfDa0fEN/U57LNGyZV9wy8RJbgVDkmy316NV2iZLEeWJX7sxyh7DQeejsJehsf4i9CrY89rlWVnkSYBD4b9VPWnmL0oITdiwDrf7phFTLkgdAeHcxU2pe7ORg+TtVc7nCT7c/fZttfzUxzMJcFbCNRuGu8ESD8QZgAAEDbZt1SCymWe29+Y0SUbiV9gAnbqhgqBVsC9/w0HrOd2zpNQS6e6ioq4/mF68YFFeqKTi+8IiezVw2+5NlQOu6YoENH4bfsF4gz2X8BZ/n5Gm6Tm8nhEp9+CMY8YGEvfA8u97zce9D7rKk/N2LD83GTx7pv2ts4gpyfyNVFn3c89469wB/x5hjk68Ec53lQMSGcf4R0OWEEDT8iFfXNqSf7DhnUJGfLGIbZncFYnxF17DTcrfK7mcasRH5HVotLCwRQilmCwwzfytxv2FpxPlH4jUihPrWbaBncRX13uGsn8+rSQulBB/x/6qKVnWMeUrfwgomnNRguXCpYNbGut5D7c6ypDRs3zPFOnKkLrDrqgBzYOhB24AuUcWX45WG9XEeoilpWaWeH1Sc6Td32iIUPJkk3++Ww5pFB93DdySZtFiepAMOo9aqfVchhiYse4LUSpNyE4101fouVVPH6XLB5sEgYlWZ2T0rc+cUr2E/qLI+xsgUQnS8asj0pY56rA8COA8gBQJh2R9xspcwuMvnNVMJJ5NOBJwZED/bsvRUE7xrulpNHd/pDhw3ysEMpr+DXpV2C1f3grI/qdjqvp//1JeBpLvOZNVVBf4rEfy2nhA/zN72Jq53/P7zzZ5m/I+/ry+WrYUdrbvI0iekigtkqHZOtzwCoscpXHhB0nSiS5qGdAeaOOblVqZBpKJSS70cV0Ir9EoD9GvqeF9CfE5J4uQz1zpvmaMbGvsoCtHQ5Lrm1+UCG9PTPV8GVuk6VjPXIQwebB4z7JMgbEf+RAbo79uFRzo0VkjcvPV6C72BkRhFt26g+dJg91AUpSaoYELCQooAI="; // Replace with your actual token
+  if (accessToken.isEmpty) return;
+
+  final Map<String, dynamic> eventData = {
+    "subject": title,
+    "body": {"contentType": "HTML", "content": bodyContent},
+    "start": {"dateTime": startDateTime, "timeZone": "Pacific Standard Time"},
+    "end": {"dateTime": endDateTime, "timeZone": "Pacific Standard Time"},
+    "location": {"displayName": location},
+    "allowNewTimeProposals": true,
+  };
+
+  final response = await http.post(
+    Uri.parse('https://graph.microsoft.com/v1.0/me/events'),
+    headers: {
+      'Authorization': 'Bearer $accessToken',
+      'Content-Type': 'application/json',
+      'Prefer': 'outlook.timezone="Pacific Standard Time"',
+    },
+    body: jsonEncode(eventData),
+  );
+
+  if (response.statusCode == 201) {
+    print('Event created successfully');
+  } else {
+    print('Failed to create event: ${response.statusCode}');
+    print('Response body: ${response.body}');
+  }
+}
+
+class EventDialog extends StatefulWidget {
+  final Function(String title, String bodyContent, String startDate,
+      String endDate, String location) onSubmit;
+
+  EventDialog({required this.onSubmit});
+
+  @override
+  _EventDialogState createState() => _EventDialogState();
+}
+
+class _EventDialogState extends State<EventDialog> {
+  final _formKey = GlobalKey<FormState>();
+  String eventTitle = '';
+  String eventBody = '';
+  DateTime eventStartDate = DateTime.now();
+  DateTime eventEndDate = DateTime.now();
+  String eventLocation = '';
+
+  String _formatDate(DateTime date) {
+    return DateFormat("yyyy-MM-ddTHH:mm:ss").format(date);
+  }
+
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: eventStartDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != eventStartDate) {
+      setState(() {
+        eventStartDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: eventEndDate,
+      firstDate: eventStartDate,
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != eventEndDate) {
+      setState(() {
+        eventEndDate = picked;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Create Event"),
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: "Event Title"),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an event title';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  eventTitle = value!;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Event Body"),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter event details';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  eventBody = value!;
+                },
+              ),
+              ListTile(
+                title: Text(
+                    "Start Date: ${DateFormat('yyyy-MM-dd').format(eventStartDate)}"),
+                trailing: Icon(Icons.calendar_today),
+                onTap: () => _selectStartDate(context),
+              ),
+              ListTile(
+                title: Text(
+                    "End Date: ${DateFormat('yyyy-MM-dd').format(eventEndDate)}"),
+                trailing: Icon(Icons.calendar_today),
+                onTap: () => _selectEndDate(context),
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: "Location"),
+                onSaved: (value) {
+                  eventLocation = value!;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: Text("Cancel"),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        ElevatedButton(
+          child: Text("Create"),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+
+              // Format the dates for the API
+              final startDate = _formatDate(eventStartDate);
+              final endDate = _formatDate(eventEndDate);
+
+              widget.onSubmit(
+                eventTitle,
+                eventBody,
+                startDate,
+                endDate,
+                eventLocation,
+              );
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ],
     );
   }
 }

@@ -37,7 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   http: ^1.2.2
   crypto: ^3.0.5
-  flutter_msal: ^2.0.1
+  table_calendar: ^3.1.2
+  intl: ^0.19.0
+  
 
 dev_dependencies:
   flutter_test:
