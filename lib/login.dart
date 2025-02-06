@@ -16,8 +16,8 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
   String? authCode;
   String? codeVerifier;
   String? codeChallenge;
-  final tenantid = 'fb7834ec-ee45-4353-9655-0496df9120e0';
-  final String clientId = '925af6e0-4cc9-4657-bc67-22c1401cd99e';
+  final tenantid = 'b3561463-08b6-4c31-8ca6-eb063f60dd24';
+  final String clientId = '326cd96d-45d2-4569-b22c-daad062af497';
   final String redirectUri =
       'http://localhost:53518/'; // Use HTTPS in production
   //     late final String authorizationEndpoint;
@@ -190,7 +190,8 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
       Uri.parse(
           'https://graph.microsoft.com/v1.0/me/events?\$select=subject,body,bodyPreview,organizer,attendees,start,end,location'), // Correct endpoint
       headers: {
-        'Authorization': 'Bearer EwCYA8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAQjcQeIEEq0M9RiPjCk8OVsG0+pit5hcMoqbqHsNLI1s8ODlfmKWzSq7kFMX/WJ6mD6287cSlkGLMDyHbwMx3Aosf6SVoSnklygzuYRxfL6MvKe73fAPy0u7Zre0C+8ytx+eX2gWY4lcyh9wwjcHBr+vWvwIhHzeD/mTqX64xojxjb6gOnbseHF+qkfDa0fEN/U57LNGyZV9wy8RJbgVDkmy316NV2iZLEeWJX7sxyh7DQeejsJehsf4i9CrY89rlWVnkSYBD4b9VPWnmL0oITdiwDrf7phFTLkgdAeHcxU2pe7ORg+TtVc7nCT7c/fZttfzUxzMJcFbCNRuGu8ESD8QZgAAEDbZt1SCymWe29+Y0SUbiV9gAnbqhgqBVsC9/w0HrOd2zpNQS6e6ioq4/mF68YFFeqKTi+8IiezVw2+5NlQOu6YoENH4bfsF4gz2X8BZ/n5Gm6Tm8nhEp9+CMY8YGEvfA8u97zce9D7rKk/N2LD83GTx7pv2ts4gpyfyNVFn3c89469wB/x5hjk68Ec53lQMSGcf4R0OWEEDT8iFfXNqSf7DhnUJGfLGIbZncFYnxF17DTcrfK7mcasRH5HVotLCwRQilmCwwzfytxv2FpxPlH4jUihPrWbaBncRX13uGsn8+rSQulBB/x/6qKVnWMeUrfwgomnNRguXCpYNbGut5D7c6ypDRs3zPFOnKkLrDrqgBzYOhB24AuUcWX45WG9XEeoilpWaWeH1Sc6Td32iIUPJkk3++Ww5pFB93DdySZtFiepAMOo9aqfVchhiYse4LUSpNyE4101fouVVPH6XLB5sEgYlWZ2T0rc+cUr2E/qLI+xsgUQnS8asj0pY56rA8COA8gBQJh2R9xspcwuMvnNVMJJ5NOBJwZED/bsvRUE7xrulpNHd/pDhw3ysEMpr+DXpV2C1f3grI/qdjqvp//1JeBpLvOZNVVBf4rEfy2nhA/zN72Jq53/P7zzZ5m/I+/ry+WrYUdrbvI0iekigtkqHZOtzwCoscpXHhB0nSiS5qGdAeaOOblVqZBpKJSS70cV0Ir9EoD9GvqeF9CfE5J4uQz1zpvmaMbGvsoCtHQ5Lrm1+UCG9PTPV8GVuk6VjPXIQwebB4z7JMgbEf+RAbo79uFRzo0VkjcvPV6C72BkRhFt26g+dJg91AUpSaoYELCQooAI=',
+        'Authorization':
+            'Bearer EwCYA8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAQjcQeIEEq0M9RiPjCk8OVsG0+pit5hcMoqbqHsNLI1s8ODlfmKWzSq7kFMX/WJ6mD6287cSlkGLMDyHbwMx3Aosf6SVoSnklygzuYRxfL6MvKe73fAPy0u7Zre0C+8ytx+eX2gWY4lcyh9wwjcHBr+vWvwIhHzeD/mTqX64xojxjb6gOnbseHF+qkfDa0fEN/U57LNGyZV9wy8RJbgVDkmy316NV2iZLEeWJX7sxyh7DQeejsJehsf4i9CrY89rlWVnkSYBD4b9VPWnmL0oITdiwDrf7phFTLkgdAeHcxU2pe7ORg+TtVc7nCT7c/fZttfzUxzMJcFbCNRuGu8ESD8QZgAAEDbZt1SCymWe29+Y0SUbiV9gAnbqhgqBVsC9/w0HrOd2zpNQS6e6ioq4/mF68YFFeqKTi+8IiezVw2+5NlQOu6YoENH4bfsF4gz2X8BZ/n5Gm6Tm8nhEp9+CMY8YGEvfA8u97zce9D7rKk/N2LD83GTx7pv2ts4gpyfyNVFn3c89469wB/x5hjk68Ec53lQMSGcf4R0OWEEDT8iFfXNqSf7DhnUJGfLGIbZncFYnxF17DTcrfK7mcasRH5HVotLCwRQilmCwwzfytxv2FpxPlH4jUihPrWbaBncRX13uGsn8+rSQulBB/x/6qKVnWMeUrfwgomnNRguXCpYNbGut5D7c6ypDRs3zPFOnKkLrDrqgBzYOhB24AuUcWX45WG9XEeoilpWaWeH1Sc6Td32iIUPJkk3++Ww5pFB93DdySZtFiepAMOo9aqfVchhiYse4LUSpNyE4101fouVVPH6XLB5sEgYlWZ2T0rc+cUr2E/qLI+xsgUQnS8asj0pY56rA8COA8gBQJh2R9xspcwuMvnNVMJJ5NOBJwZED/bsvRUE7xrulpNHd/pDhw3ysEMpr+DXpV2C1f3grI/qdjqvp//1JeBpLvOZNVVBf4rEfy2nhA/zN72Jq53/P7zzZ5m/I+/ry+WrYUdrbvI0iekigtkqHZOtzwCoscpXHhB0nSiS5qGdAeaOOblVqZBpKJSS70cV0Ir9EoD9GvqeF9CfE5J4uQz1zpvmaMbGvsoCtHQ5Lrm1+UCG9PTPV8GVuk6VjPXIQwebB4z7JMgbEf+RAbo79uFRzo0VkjcvPV6C72BkRhFt26g+dJg91AUpSaoYELCQooAI=',
         'Content-Type': 'application/json',
       },
     );
@@ -294,7 +295,6 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
                             // Trigger login logic here
                           }
                         },
-                        child: const Text('Sign In'),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.blueAccent,
@@ -304,6 +304,7 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
+                        child: const Text('Sign In'),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
