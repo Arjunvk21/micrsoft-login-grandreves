@@ -24,9 +24,9 @@ class _MicrosoftLoginPageState extends State<MicrosoftLoginPage> {
   // late final String tokenEndpoint;
 
   final String authorizationEndpoint =
-      'https://login.microsoftonline.com/fb7834ec-ee45-4353-9655-0496df9120e0/oauth2/v2.0/authorize';
+      'https://login.microsoftonline.com/b3561463-08b6-4c31-8ca6-eb063f60dd24/v2.0/authorize';
   final tokenEndpoint =
-      'https://login.microsoftonline.com/fb7834ec-ee45-4353-9655-0496df9120e0/oauth2/v2.0/token';
+      'https://login.microsoftonline.com/b3561463-08b6-4c31-8ca6-eb063f60dd24/oauth2/v2.0/token';
 
   // final String authorizationEndpoint =
   //     'https://login.microsoftonline.com\$tenantid/oauth2/v2.0/authorize';
